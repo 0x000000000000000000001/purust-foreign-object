@@ -5,6 +5,18 @@ use std::sync::{Mutex, MutexGuard};
 pub struct STObject(Mutex<HashMap<String, crate::UnknownType>>);
 
 impl STObject {
+    pub fn empty() -> Self {
+        Self(Mutex::new(HashMap::new()))
+    }
+
+    pub fn snapshot(&self) -> Self {
+        Self(Mutex::new(self.lock().clone()))
+    }
+
+    pub fn get(&self, key: &str) -> Option<crate::UnknownType> {
+        self.lock().get(key).cloned()
+    }
+
     fn lock(&self) -> MutexGuard<'_, HashMap<String, crate::UnknownType>> {
         self.0
             .lock()
@@ -24,9 +36,7 @@ fn purust_object_st_handle(object: Rc<STObject>) -> crate::UnknownType {
 }
 
 pub fn Foreign_Object_ST_new() -> crate::UnknownType {
-    purust_object_st_action(|| {
-        purust_object_st_handle(Rc::new(STObject(Mutex::new(HashMap::new()))))
-    })
+    purust_object_st_action(|| purust_object_st_handle(Rc::new(STObject::empty())))
 }
 
 pub fn Foreign_Object_ST_poke(
@@ -57,7 +67,7 @@ pub fn Foreign_Object_ST_peekImpl(
 ) -> crate::UnknownType {
     purust_object_st_action(move || {
         // The callback may access this same object: release the lock first.
-        let value = object.lock().get(&key).cloned();
+        let value = object.get(&key);
         match value {
             Some(value) => just(value),
             None => nothing.clone(),
