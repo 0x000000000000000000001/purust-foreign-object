@@ -48,3 +48,15 @@ pub fn Foreign_Object__lookup() -> crate::UnknownType {
         })
     })
 }
+
+pub fn Foreign_Object__mapWithKey() -> crate::UnknownType {
+    crate::Value::Func2(purust_core::Func2::Shared(Rc::new(move |object, callback| {
+        let entries = object.unwrap_class::<Rc<Object>>().entries();
+        let mapped = entries.into_iter().map(|(key, value)| {
+            let result = callback.unwrap_func1()(crate::Value::String(key.clone()))
+                .unwrap_func1()(value);
+            (key, result)
+        }).collect();
+        crate::Value::Class(Rc::new(Rc::new(Object::from_entries(mapped))))
+    })))
+}

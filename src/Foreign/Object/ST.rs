@@ -1,28 +1,5 @@
-use std::collections::HashMap;
 use std::rc::Rc;
-use std::sync::{Mutex, MutexGuard};
-
-pub struct STObject(Mutex<HashMap<String, crate::UnknownType>>);
-
-impl STObject {
-    pub fn empty() -> Self {
-        Self(Mutex::new(HashMap::new()))
-    }
-
-    pub fn snapshot(&self) -> Self {
-        Self(Mutex::new(self.lock().clone()))
-    }
-
-    pub fn get(&self, key: &str) -> Option<crate::UnknownType> {
-        self.lock().get(key).cloned()
-    }
-
-    fn lock(&self) -> MutexGuard<'_, HashMap<String, crate::UnknownType>> {
-        self.0
-            .lock()
-            .unwrap_or_else(|poisoned| poisoned.into_inner())
-    }
-}
+pub use purust_core::SharedRecord as STObject;
 
 fn purust_object_st_action(
     action: impl Fn() -> crate::UnknownType + 'static,
@@ -45,7 +22,7 @@ pub fn Foreign_Object_ST_poke(
     object: Rc<STObject>,
 ) -> crate::UnknownType {
     purust_object_st_action(move || {
-        let previous = object.lock().insert(key.clone(), value.clone());
+        let previous = object.insert(key.clone(), value.clone());
         drop(previous);
         purust_object_st_handle(object.clone())
     })
@@ -53,7 +30,7 @@ pub fn Foreign_Object_ST_poke(
 
 pub fn Foreign_Object_ST_delete(key: String, object: Rc<STObject>) -> crate::UnknownType {
     purust_object_st_action(move || {
-        let previous = object.lock().remove(&key);
+        let previous = object.remove(&key);
         drop(previous);
         purust_object_st_handle(object.clone())
     })
