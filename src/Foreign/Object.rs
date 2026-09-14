@@ -60,3 +60,20 @@ pub fn Foreign_Object__mapWithKey() -> crate::UnknownType {
         crate::Value::Class(Rc::new(Rc::new(Object::from_entries(mapped))))
     })))
 }
+
+pub fn Foreign_Object_toArrayWithKey(
+    callback: purust_core::Func2<String, crate::UnknownType, crate::UnknownType>,
+    object: Rc<Object>,
+) -> crate::UnknownType {
+    // SharedRecord enumerates own keys in JS order. Keep the initial keys, but
+    // read each value just before its callback: callbacks may update/delete a
+    // later entry. Never hold a record lock while invoking user code.
+    let keys: Vec<String> = object.entries().into_iter().map(|(key, _)| key).collect();
+    let mut result = Vec::with_capacity(keys.len());
+    for key in keys {
+        if let Some(value) = object.get(&key) {
+            result.push(callback(key, value));
+        }
+    }
+    purust_core::mk_array(result)
+}
