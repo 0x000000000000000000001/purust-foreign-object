@@ -77,3 +77,37 @@ pub fn Foreign_Object_toArrayWithKey(
     }
     purust_core::mk_array(result)
 }
+
+pub fn Foreign_Object__foldM(
+    bind: purust_core::Func2<
+        crate::UnknownType,
+        purust_core::Func1<crate::UnknownType, crate::UnknownType>,
+        crate::UnknownType,
+    >,
+    callback: purust_core::Func3<
+        crate::UnknownType,
+        String,
+        crate::UnknownType,
+        crate::UnknownType,
+    >,
+    initial: crate::UnknownType,
+    object: Rc<Object>,
+) -> crate::UnknownType {
+    let keys: Vec<String> = object.entries().into_iter().map(|(key, _)| key).collect();
+    let mut result = initial;
+    for key in keys {
+        // An eager bind may have deleted a later key during enumeration.
+        if object.get(&key).is_none() {
+            continue;
+        }
+        let object = object.clone();
+        let callback = callback.clone();
+        result = bind(result, purust_core::Func1::Shared(Rc::new(move |accumulator| {
+            // Match g(k): read at continuation execution, not fold construction.
+            // A property deleted after construction is JS undefined, not skipped.
+            let value = object.get(&key).unwrap_or(crate::Value::Unit);
+            callback(accumulator, key.clone(), value)
+        })));
+    }
+    result
+}
