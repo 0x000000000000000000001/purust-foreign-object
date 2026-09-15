@@ -84,7 +84,7 @@ freezeST = _copyST
 -- | The rank-2 type prevents the Object from escaping the scope of `runST`.
 foreign import runST :: forall a. (forall r. ST r (STObject r a)) -> Object a
 
-mutate :: forall a. (forall r. STObject r a -> ST r (STObject r a)) -> Object a -> Object a
+mutate :: forall a b. (forall r. STObject r a -> ST r b) -> Object a -> Object a
 mutate f m = runST do
   s <- thawST m
   _ <- f s
