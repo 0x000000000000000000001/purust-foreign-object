@@ -1,0 +1,92 @@
+Running StrMap tests
+Test inserting into empty tree
+100/100 test(s) passed.
+Test inserting two values with same key
+100/100 test(s) passed.
+Test delete after inserting
+100/100 test(s) passed.
+Test pop after inserting
+100/100 test(s) passed.
+Pop non-existent key
+100/100 test(s) passed.
+Insert two, lookup first
+100/100 test(s) passed.
+Insert two, lookup second
+100/100 test(s) passed.
+Insert two, delete one
+100/100 test(s) passed.
+Lookup from empty
+100/100 test(s) passed.
+Lookup from singleton
+100/100 test(s) passed.
+Random lookup
+1000/1000 test(s) passed.
+Singleton to list
+100/100 test(s) passed.
+filterWithKey gives submap
+100/100 test(s) passed.
+filterWithKey keeps those keys for which predicate is true
+100/100 test(s) passed.
+filterKeys gives submap
+100/100 test(s) passed.
+filterKeys keeps those keys for which predicate is true
+100/100 test(s) passed.
+filter gives submap
+100/100 test(s) passed.
+filter keeps those values for which predicate is true
+100/100 test(s) passed.
+fromFoldable [] = empty
+100/100 test(s) passed.
+fromFoldable & key collision
+100/100 test(s) passed.
+100/100 test(s) passed.
+100/100 test(s) passed.
+fromFoldableWithIndex
+100/100 test(s) passed.
+100/100 test(s) passed.
+100/100 test(s) passed.
+fromFoldableWith const [] = empty
+100/100 test(s) passed.
+fromFoldableWith (+) & key collision
+100/100 test(s) passed.
+100/100 test(s) passed.
+100/100 test(s) passed.
+toUnfoldable . fromFoldable = id
+100/100 test(s) passed.
+fromFoldable . toUnfoldable = id
+100/100 test(s) passed.
+fromFoldableWithIndex = id
+100/100 test(s) passed.
+fromFoldableWithIndex = fromFoldable . toUnfoldable
+100/100 test(s) passed.
+fromFoldableWith const = fromFoldable
+100/100 test(s) passed.
+fromFoldableWith (<>) = fromFoldable . collapse with (<>) . group on fst
+100/100 test(s) passed.
+unionWith
+100/100 test(s) passed.
+100/100 test(s) passed.
+unionWith argument order
+100/100 test(s) passed.
+fromFoldable = zip keys values
+100/100 test(s) passed.
+mapWithKey is correct
+100/100 test(s) passed.
+foldl = foldlWithIndex <<< const
+100/100 test(s) passed.
+foldr = foldrWithIndex <<< const
+100/100 test(s) passed.
+foldlWithIndex = foldrWithIndex with flipped operation
+100/100 test(s) passed.
+foldMapWithIndex f ~ traverseWithIndex (\k v -> tell (f k v))
+100/100 test(s) passed.
+traverse = traverseWithIndex <<< const (for m = Writer)
+100/100 test(s) passed.
+sequence works (for m = Array)
+100/100 test(s) passed.
+sequence works (for m = Maybe)
+100/100 test(s) passed.
+Bug #63: accidental observable mutation in foldMap
+100/100 test(s) passed.
+fromFoldable stack safety
+Semigroup instance
